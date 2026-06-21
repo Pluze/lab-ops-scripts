@@ -1,7 +1,7 @@
 # Leica LAS X S9i UCAPI Fix
 
-Conservative PowerShell fix for a specific Leica LAS X 3.x + Leica S9i/UVC
-failure mode.
+Conservative PowerShell fix for Leica LAS X 3.x + Leica S9i/UVC black-screen
+failure modes.
 
 This script is not an official Leica Microsystems tool.
 
@@ -9,6 +9,8 @@ This script is not an official Leica Microsystems tool.
 
 - LAS X detects `Leica S9I Stereozoom`, but Live view is black.
 - Windows Camera can show the microscope image, but LAS X cannot.
+- LAS X and Windows Camera are both black, but power-cycling the microscope
+  restores video.
 - LAS X only shows incorrect 4:3 resolution options.
 - Normal 16:9 modes such as 1080p or 2160p are missing or unstable.
 - Capture, white balance, brightness, or gain controls hang in LAS X.
@@ -22,7 +24,26 @@ This script is not an official Leica Microsystems tool.
 
 ## What It Changes
 
-The script performs two changes, each with backups.
+The script performs three recovery steps. Config files are backed up before any
+edit.
+
+### S9i USB/UVC Recovery
+
+It first finds the present S9i camera interface by friendly name, reads its
+parent USB device from Windows device properties, and restarts that parent USB
+Composite Device. The default fallback USB device ID prefix is:
+
+```text
+USB\VID_1711&PID_3004
+```
+
+and then runs a hardware scan. By default the script first finds the S9i camera
+by friendly name, then reads the camera interface's parent USB device from the
+Windows device tree. The USB ID above is only the fallback prefix for Leica S9i.
+
+This can recover the failure mode where Windows still sees the S9i as healthy,
+but both LAS X and Windows Camera show black video until the microscope is
+power-cycled.
 
 ### UCAPI DirectShow Compatibility
 
@@ -60,6 +81,8 @@ Optional:
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\Fix-LASX-S9i-UCAPI.ps1 -NoRestart
 powershell -ExecutionPolicy Bypass -File .\Fix-LASX-S9i-UCAPI.ps1 -NoPause
+powershell -ExecutionPolicy Bypass -File .\Fix-LASX-S9i-UCAPI.ps1 -SkipUsbReset
+powershell -ExecutionPolicy Bypass -File .\Fix-LASX-S9i-UCAPI.ps1 -S9iCameraNamePattern "*Leica*S9*" -S9iUsbDeviceIdPrefix "USB\VID_1711&PID_3004"
 ```
 
 The script requests administrator rights if needed.

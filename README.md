@@ -21,7 +21,7 @@ that are useful enough to keep, document, and reuse.
 
 | Script | Purpose | Platform |
 | --- | --- | --- |
-| [Leica LAS X S9i UCAPI Fix](scripts/leica-lasx-s9i-ucapi-fix/) | Fixes a LAS X 3.x S9i black Live view / corrupted resolution list issue caused by UCAPI DirectShow format handling and duplicate hardware-tree camera nodes. | Windows / PowerShell |
+| [Leica LAS X S9i UCAPI Fix](scripts/leica-lasx-s9i-ucapi-fix/) | One-click recovery for Leica S9i black video in LAS X or Windows Camera, including USB/UVC reset, UCAPI DirectShow compatibility, and duplicate hardware-tree camera cleanup. | Windows / PowerShell |
 | [Windows Awake Forever](scripts/windows-awake-forever/) | Keeps a Windows workstation display awake during long lab runs, monitoring, transfers, or instrument sessions. | Windows / PowerShell |
 
 ## Layout
