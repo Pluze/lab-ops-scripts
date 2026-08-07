@@ -23,6 +23,7 @@ that are useful enough to keep, document, and reuse.
 | --- | --- | --- |
 | [Leica LAS X S9i UCAPI Fix](scripts/leica-lasx-s9i-ucapi-fix/) | One-click recovery for Leica S9i black video in LAS X or Windows Camera, including USB/UVC reset, UCAPI DirectShow compatibility, and duplicate hardware-tree camera cleanup. | Windows / PowerShell |
 | [Windows Headless Server](scripts/windows-headless-server/) | Configures a Windows host for unattended LAN-only RDP and SSH, boot-time self-healing, no AC sleep, and supported network wake features. | Windows Pro-class / PowerShell |
+| [Windows UEFI Read-Only Audit](scripts/windows-uefi-readonly-audit/) | Inventories runtime-visible UEFI Setup/power/wake variable metadata without loading a driver or exporting raw variable contents. | Windows / PowerShell |
 | [Windows Awake Forever](scripts/windows-awake-forever/) | Keeps a Windows workstation display awake during long lab runs, monitoring, transfers, or instrument sessions. | Windows / PowerShell |
 
 ## Layout
