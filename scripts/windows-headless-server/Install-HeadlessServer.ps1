@@ -37,6 +37,25 @@ function Assert-Config([hashtable]$Config) {
     }
 }
 
+function Set-HeadlessServerDirectoryAcl([string]$Path) {
+    # Use well-known SIDs rather than localized account names. The rules apply
+    # to the directory and are inherited by all installed runtime files.
+    $systemSid = [Security.Principal.SecurityIdentifier]::new('S-1-5-18')
+    $administratorsSid = [Security.Principal.SecurityIdentifier]::new('S-1-5-32-544')
+    $usersSid = [Security.Principal.SecurityIdentifier]::new('S-1-5-32-545')
+    $inheritance = [Security.AccessControl.InheritanceFlags]'ContainerInherit, ObjectInherit'
+    $propagation = [Security.AccessControl.PropagationFlags]::None
+    $allow = [Security.AccessControl.AccessControlType]::Allow
+
+    $acl = [Security.AccessControl.DirectorySecurity]::new()
+    $acl.SetAccessRuleProtection($true, $false)
+    $acl.SetOwner($administratorsSid)
+    $acl.AddAccessRule([Security.AccessControl.FileSystemAccessRule]::new($systemSid, 'FullControl', $inheritance, $propagation, $allow))
+    $acl.AddAccessRule([Security.AccessControl.FileSystemAccessRule]::new($administratorsSid, 'FullControl', $inheritance, $propagation, $allow))
+    $acl.AddAccessRule([Security.AccessControl.FileSystemAccessRule]::new($usersSid, 'ReadAndExecute', $inheritance, $propagation, $allow))
+    Set-Acl -LiteralPath $Path -AclObject $acl
+}
+
 Assert-Administrator
 if (-not (Test-Path -LiteralPath $ConfigPath)) { throw "Configuration file not found: $ConfigPath" }
 $config = Import-PowerShellDataFile -LiteralPath $ConfigPath
@@ -138,7 +157,7 @@ Port $($config.SshPort)
     $watchTrigger = New-ScheduledTaskTrigger -Once -At (Get-Date).AddMinutes(1) -RepetitionInterval (New-TimeSpan -Minutes ([int]$config.WatchdogIntervalMinutes))
     Register-ScheduledTask -TaskPath $TaskPath -TaskName Watchdog -Action $watchAction -Trigger $watchTrigger -Settings $settings -Principal $taskPrincipal -Force | Out-Null
 
-    & icacls.exe $InstallRoot /inheritance:r /grant:r 'SYSTEM:(OI)(CI)F' 'Administrators:(OI)(CI)F' 'Users:(OI)(CI)RX' | Out-Null
+    Set-HeadlessServerDirectoryAcl $InstallRoot
     & (Join-Path $InstallRoot 'Get-Status.ps1')
     Write-Host "Installed. Runtime files and audit output: $InstallRoot"
 }

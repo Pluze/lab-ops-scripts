@@ -39,6 +39,8 @@ interactive sign-in or recurring UAC approval is required afterward.
   failures.
 - Saves power, firewall, RDP policy, and SSH configuration backups under
   `C:\ProgramData\HeadlessServer\backup`.
+- Protects runtime files using the well-known Windows SIDs for SYSTEM,
+  Administrators, and Users so ACL setup is independent of display language.
 
 It does not store a Wi-Fi password, an SSH private key, a public IP address, or
 any machine-specific identifier in this repository.
