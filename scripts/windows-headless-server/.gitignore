@@ -1,0 +1,8 @@
+Config.psd1
+*.log
+*.clixml
+status.json
+network-failures.txt
+backup/
+ssh_host_*_key
+id_*

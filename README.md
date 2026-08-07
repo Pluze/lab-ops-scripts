@@ -22,6 +22,7 @@ that are useful enough to keep, document, and reuse.
 | Script | Purpose | Platform |
 | --- | --- | --- |
 | [Leica LAS X S9i UCAPI Fix](scripts/leica-lasx-s9i-ucapi-fix/) | One-click recovery for Leica S9i black video in LAS X or Windows Camera, including USB/UVC reset, UCAPI DirectShow compatibility, and duplicate hardware-tree camera cleanup. | Windows / PowerShell |
+| [Windows Headless Server](scripts/windows-headless-server/) | Configures a Windows host for unattended LAN-only RDP and SSH, boot-time self-healing, no AC sleep, and supported network wake features. | Windows Pro-class / PowerShell |
 | [Windows Awake Forever](scripts/windows-awake-forever/) | Keeps a Windows workstation display awake during long lab runs, monitoring, transfers, or instrument sessions. | Windows / PowerShell |
 
 ## Layout
@@ -42,6 +43,14 @@ lab-ops-scripts/
 
     windows-awake-forever/
       awake_forever.ps1
+      README.md
+
+    windows-headless-server/
+      Config.example.psd1
+      Install-HeadlessServer.ps1
+      Maintain-HeadlessServer.ps1
+      Get-HeadlessServerStatus.ps1
+      Uninstall-HeadlessServer.ps1
       README.md
 
   docs/
