@@ -16,6 +16,10 @@ settings.
 - Does not export raw UEFI variable contents.
 - Returns candidate names, GUIDs, sizes, attributes, and SHA-256 hashes only.
 
+`Resolve-IfrSetupOption.ps1` is an offline companion. It reads text already
+produced by IFRExtractor-RS and, optionally, an extracted variable body. It
+does not call firmware APIs, load a driver, or contain a write path.
+
 The API is not a documented application contract and can be restricted by a
 Windows release or firmware. Failure is a valid audit result, not a reason to
 disable Secure Boot, VBS, HVCI, or driver-signature enforcement.
@@ -36,6 +40,21 @@ variables are returned. To return metadata for every enumerated variable:
 .\Read-UefiVariableInventory.ps1 -IncludeAllVariableMetadata
 ```
 
+To map an IFR question to an extracted variable body:
+
+```powershell
+.\Resolve-IfrSetupOption.ps1 `
+  -IfrPath .\setup.en-US.uefi.ifr.txt `
+  -PromptPattern '^Restore AC Power Loss$' `
+  -VariableBodyPath .\PchSetup.body.bin `
+  -OutputPath .\restore-ac-power-loss.json
+```
+
+The result identifies the VarStore name/GUID, byte offset, value width,
+available options, defaults, raw numeric value, and decoded option. If the
+prompt occurs more than once, use `-MatchIndex` only after comparing every
+match's VarStore, GUID, offset, and surrounding form.
+
 Do not commit generated inventories. Even metadata can identify a particular
 firmware build or platform.
 
@@ -55,7 +74,8 @@ A conservative open-source mapping pipeline is:
 3. Convert the Setup form package with
    [IFRExtractor-RS](https://github.com/LongSoft/IFRExtractor-RS).
 4. Match the IFR VarStore name, GUID, offset, size, and option values to the
-   live variable.
+   extracted variable body. `Resolve-IfrSetupOption.ps1` performs this
+   mechanical mapping after the inputs have been independently verified.
 5. Report the decoded value without offering a write operation.
 
 If Windows cannot enumerate the required variable, CHIPSEC can inspect UEFI
@@ -78,6 +98,9 @@ brick a computer. It is not part of this unattended Windows workflow.
   driver-backed or UEFI-shell audit.
 - Exact BIOS image unavailable: behavioral testing and visible BIOS access are
   more reliable than applying offsets from another firmware revision.
+- OEM update image only: it commonly contains defaults, not the machine's live
+  NVRAM. Label the result as a firmware default unless the body came from a
+  separately authorized live read.
 
 ## License
 
